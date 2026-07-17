@@ -1,0 +1,33 @@
+# CSV files (too large for GitHub - keep local only)
+Datasets/*.csv
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# Jupyter
+*.ipynb_checkpoints
+.jupyter/
+
+# Power BI temporary files
+powerbi/*.pbix.tmp
+powerbi/~*
+
+# Environment / secrets
+.env
+*.env
+config.ini
+
+# OS files
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
