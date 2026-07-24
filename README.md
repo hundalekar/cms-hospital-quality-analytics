@@ -33,6 +33,7 @@ End-to-end data analytics project analyzing US hospital quality across 4 CMS pub
 | Git / GitHub | Version control |
 
 ## Project Structure
+```
 Project 1/
 ├── datasets/                    # Raw CSVs (blocked from Git)
 ├── docs/                        # Charts and decision memo
@@ -53,6 +54,7 @@ Project 1/
 ├── .env.example                 # Template for DB credentials
 ├── .gitignore
 └── README.md
+```
 
 ## Stage 5: Statistical Analysis
 
