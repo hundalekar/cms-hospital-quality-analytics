@@ -7,10 +7,10 @@ End-to-end data analytics project analyzing US hospital quality across 4 CMS pub
 *"Which hospital characteristics and quality measures are statistically associated with higher readmission rates and lower star ratings?"*
 
 ## Scale
-- **5,432** US hospitals analyzed
-- **445,458** total measure-level records
-- **4** integrated CMS public datasets
-- Coverage period: 2021 - 2025
+* Hospitals analyzed: 5,432
+* Measure-level records: 445,458
+* Integrated CMS datasets: 4
+* Coverage period: 2021 - 2025
 
 ## Datasets
 
