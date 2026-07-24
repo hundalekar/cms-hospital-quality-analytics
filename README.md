@@ -54,17 +54,6 @@ Project 1/
 ├── .gitignore
 └── README.md
 
-## Project Stages
-
-| Stage | Description | Status |
-|---|---|---|
-| 1 | Setup and Data Loading | Complete |
-| 2 | Data Cleaning (SQL views) | Complete |
-| 3 | Data Transformation (aggregation to hospital grain) | Complete |
-| 4 | SQL Analysis (8 analytical queries) | Complete |
-| 5 | Statistical Analysis (Python + Jupyter) | Complete |
-| 6 | Power BI Dashboard | In Progress |
-
 ## Stage 5: Statistical Analysis
 
 Statistical testing performed in `python/06_stats.ipynb` using PostgreSQL view `v_hospital_master` (5,432 hospitals, 30 columns after dropping `avg_linear_score` due to r=0.99 redundancy with `patient_star_rating`).
@@ -106,3 +95,74 @@ Statistical testing performed in `python/06_stats.ipynb` using PostgreSQL view `
 - Physician-owned hospital results likely reflect **selection bias** (patient case-mix, elective procedures)
 - Both parametric and non-parametric tests reported for robustness
 - Effect sizes reported alongside p-values throughout to prevent overclaiming statistical significance as practical importance
+
+## Stage 6: Power BI Dashboard
+
+Interactive 3-page dashboard built on PostgreSQL view `v_hospital_master` (Import mode). All pages share synchronized slicers (State, Hospital Ownership, Hospital Type) for cross-page filtering.
+
+### Page 1: Quality Landscape
+Executive overview of the hospital population.
+
+![Page 1 - Quality Landscape](docs/page1_quality_landscape.png)
+
+- 4 KPIs: Total Hospitals (5,432), Avg Star Rating (3.21), % Below Benchmark (50%), % Complete Coverage (56%)
+- Azure Map: Average Excess Readmission Ratio by state
+- Hospital Rating Distribution bar chart with star-rating color palette (red-to-green)
+
+### Page 2: Who Performs, Who Struggles
+Segmentation analysis identifying best and worst performing groups.
+
+![Page 2 - Who Performs, Who Struggles](docs/page2_segmentation.png)
+
+- 4 KPIs: Top Performer (VA 44.6%), Bottom Performer (Government-Federal 1.014), Best State (ID 0.940), Worst State (NJ 1.029)
+- Top 10 / Bottom 10 States by average ERR (green / red bar charts)
+- Avg ERR by Ownership and by Emergency Services with National Benchmark reference line at 1.0
+
+### Page 3: Evidence and Confidence
+Statistical evidence supporting the findings.
+
+![Page 3 - Evidence and Confidence](docs/page3_evidence.png)
+
+- 4 statistical KPIs: ANOVA F=20.4, η²=0.049, Cohen's d=0.26, 10 of 28 pairwise significant
+- 5-Star Rating rate by ownership (min 20 hospitals filter for statistical validity)
+- Scatter: Star Rating vs Excess Readmission Ratio with trend line (r=-0.45)
+- Box plot: ERR distribution across all 8 ownership types (from Stage 5 matplotlib output)
+
+### DAX Measures Created
+| Measure | Purpose |
+|---|---|
+| Total Hospitals | Row count |
+| Avg Star Rating | Mean rating |
+| % Below Benchmark | Share of hospitals with ERR > 1.0 |
+| % Complete Coverage | Share of hospitals with complete data |
+| Best Owner 5Star | Ownership category with highest 5-star share (min 20 hospitals) |
+| Worst Owner ERR | Ownership category with highest avg ERR |
+| Best State ERR | State with lowest avg ERR (min 10 hospitals) |
+| Worst State ERR | State with highest avg ERR (min 10 hospitals) |
+| 5-Star Pct | 5-star share within filter context |
+| Rated Hospital Count | Count of hospitals with non-null rating (for min-N filters) |
+
+### Design Decisions
+| Decision | Rationale |
+|---|---|
+| Consistent color palette across pages | Red-to-green scale for ratings, blue for neutral metrics; users don't re-learn colors when navigating |
+| National Benchmark reference line at ERR=1.0 | Instant readability - bars above are worse than expected, below are better |
+| Min-N filters (20 for ownership, 10 for state) | Prevents small groups from producing misleading proportions |
+| Static images for box plot | Power BI has no native box plot visual; matplotlib output preserves Stage 5 accuracy without marketplace dependency |
+| Static KPIs on Page 3 | ANOVA, eta-squared, Cohen's d cannot be computed in native DAX; displayed as documented Python outputs |
+| Synchronized slicers, visible only on Page 1 | Cleaner UI - slicers propagate filters without cluttering downstream pages |
+
+## Decision Memo
+
+A 1-page executive summary of findings, recommendations, and limitations is provided in `docs/decision_memo.md`. This document reframes the technical analysis for a hospital-executive audience, explicitly noting that findings are observed associations (not causal claims) and that intervention effects were not estimated.
+
+## Project Stages
+
+| Stage | Description | Status |
+|---|---|---|
+| 1 | Setup and Data Loading | Complete |
+| 2 | Data Cleaning (SQL views) | Complete |
+| 3 | Data Transformation (aggregation to hospital grain) | Complete |
+| 4 | SQL Analysis (8 analytical queries) | Complete |
+| 5 | Statistical Analysis (Python + Jupyter) | Complete |
+| 6 | Power BI Dashboard | Complete |
